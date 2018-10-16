@@ -8,6 +8,7 @@ app_name = 'drf_user'
 urlpatterns = [
     # ex: api/user/login/
     path('login/', views.Login.as_view(), name='Login'),
+    path('logout/', views.LogoutView.as_view(), name='Logout'),
     # ex: api/user/register/
     path('register/', views.Register.as_view(), name='Register'),
     # ex: api/user/sendotp/

@@ -10,7 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         from .utils import check_validation
 
-        super(UserSerializer, self).validate_email(value)
         if user_settings['EMAIL_VALIDATION']:
             if check_validation(value=value):
                 return value
@@ -36,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
         from .models import User
 
         model = User
-        fields = ('id', 'username', 'name', 'email', 'mobile', 'password', 'is_superuser', 'is_staff')
+        fields = ('id', 'username', 'name', 'email', 'mobile', 'password', 'is_superuser', 'is_staff', 'is_whatsapp')
         read_only_fields = ('is_superuser', 'is_staff')
         extra_kwargs = {'password': {'write_only': True}}
 

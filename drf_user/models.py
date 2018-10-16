@@ -33,6 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     update_date = cmodels.UnixTimestampField(_('Date Modified'), auto_created=True)
     is_active = models.BooleanField(_('Activated'), default=False)
     is_staff = models.BooleanField(_('Staff Status'), default=False)
+    is_whatsapp = models.BooleanField(_('Is mobile WhatsApp enabled?'), default=False)
 
     groups = models.ManyToManyField(
         Role,
@@ -75,6 +76,7 @@ class AuthTransaction(models.Model):
     date_created = cmodels.UnixTimestampField(_('Created On'), auto_created=True)
     token = models.TextField(_('JWT Token passed'))
     session = models.TextField(_('Session Passed'))
+    is_active = models.BooleanField(_('Is Active?'), default=True)
 
     def __str__(self):
         return str(self.user.name) + ' | ' + str(self.user.username)
@@ -95,8 +97,8 @@ class OTPValidation(models.Model):
 
     otp = models.CharField(_('OTP Code'), max_length=10, unique=True)
     destination = models.CharField(_('Destination Address (Mobile/EMail)'), max_length=254, unique=True)
-    create_date = cmodels.UnixTimestampField(_('Create Date'), auto_now_add=True)
-    update_date = cmodels.UnixTimestampField(_('Date Modified'), auto_created=True)
+    create_date = models.DateTimeField(_('Create Date'), auto_now_add=True)
+    update_date = models.DateTimeField(_('Date Modified'), auto_now=True)
     is_validated = models.BooleanField(_('Is Validated'), default=False)
     validate_attempt = models.IntegerField(_('Attempted Validation'), default=3)
     prop = models.CharField(_('Destination Property'), default='E', max_length=3, choices=DESTINATION_CHOICES)

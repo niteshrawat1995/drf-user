@@ -1,6 +1,6 @@
 from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import RetrieveUpdateAPIView, RetrieveAPIView
 
 from django.utils.text import gettext_lazy as _
 
@@ -24,7 +24,8 @@ class Register(CreateAPIView):
                                         email=serializer.validated_data['email'],
                                         name=serializer.validated_data['name'],
                                         password=serializer.validated_data['password'],
-                                        mobile=serializer.validated_data['mobile'])
+                                        mobile=serializer.validated_data['mobile'],
+                                        is_whatsapp=serializer.validated_data['is_whatsapp'])
         serializer = self.get_serializer(user)
 
 
@@ -259,3 +260,29 @@ class RetrieveUpdateUserAccountView(RetrieveUpdateAPIView):
             self.request.user.save()
 
         return super(RetrieveUpdateUserAccountView, self).update(request, *args, **kwargs)
+
+
+class LogoutView(RetrieveAPIView):
+    """
+    View logs out user from the system i.e. invalidates a token
+    """
+    from rest_framework.permissions import IsAuthenticated
+
+    from .models import AuthTransaction
+
+    permission_classes = (IsAuthenticated, )
+    queryset = AuthTransaction.objects.all()
+    lookup_field = 'token'
+
+    def get_object(self):
+        self.kwargs[self.lookup_field] = self.request.META.get('HTTP_AUTHORIZATION')
+        self.kwargs['user'] = self.request.user
+        return super(LogoutView, self).get_object()
+
+    def retrieve(self, request, *args, **kwargs):
+        from rest_framework.response import Response
+
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response({'user': [_('Logout successfully.'), ]})

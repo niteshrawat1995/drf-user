@@ -13,7 +13,7 @@ class DRFUserAdmin(UserAdmin):
     """
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('name', 'email', 'mobile')}),
+        (_('Personal info'), {'fields': ('name', 'email', 'mobile', 'is_whatsapp')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser','groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )

@@ -115,3 +115,23 @@ def jwt_payload_handler(user):
         payload['iss'] = api_settings.JWT_ISSUER
 
     return payload
+
+
+def jwt_decode_handler(token):
+    from rest_framework_jwt.utils import jwt_decode_handler
+
+    from django.utils.text import gettext_lazy as _
+
+    from rest_framework.exceptions import AuthenticationFailed
+
+    from .models import AuthTransaction
+
+    try:
+        auth_transaction = AuthTransaction.objects.get(token=token.decode('utf-8'))
+    except AuthTransaction.DoesNotExist:
+        raise AuthenticationFailed(_('Unrecognized token. Kindly login again.'))
+    else:
+        if auth_transaction.is_active:
+            return jwt_decode_handler(token=token)
+        else:
+            raise AuthenticationFailed(_('Token has been disabled. Kindly login again.'))
